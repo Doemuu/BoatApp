@@ -1,0 +1,44 @@
+services:
+  backend:
+    image: boatappapi
+    build:
+      context: ./boatappapi/boatappapi
+      dockerfile: Dockerfile
+    container_name: backend
+    ports:
+      - 5000:5000
+    environment:
+      - ASPNETCORE_URLS=http://+:5000
+
+  frontend:
+    image: boatapp
+    build:
+      context: ./boatapp
+      dockerfile: Dockerfile
+      
+    container_name: frontend
+    volumes:
+      - '.:/boatapp'
+      - './boatapp/node_modules'
+    ports:
+      - 8080:8080
+
+  db:
+    container_name: db
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: Doemu
+      POSTGRES_PASSWORD: dbdoemu
+    ports:
+      - "5432:5432"
+
+  pgadmin:
+    container_name: pgadmin4_container
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: some@mail.com
+      PGADMIN_DEFAULT_PASSWORD: pw
+    ports:
+      - "5050:80"
