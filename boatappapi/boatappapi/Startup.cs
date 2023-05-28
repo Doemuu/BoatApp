@@ -1,5 +1,6 @@
 using boatappapi.Connector;
 using boatappapi.Middleware;
+using boatappapi.Service.Boat;
 using boatappapi.Service.User;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -28,6 +29,7 @@ namespace boatappapi
                o => o.UseNpgsql(Configuration.GetConnectionString("DbDoemu")));
 
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IBoatService, BoatService>();
 
         }
 
