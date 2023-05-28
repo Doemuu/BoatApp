@@ -1,4 +1,5 @@
 using boatappapi.Connector;
+using boatappapi.Middleware;
 using boatappapi.Service.User;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -40,7 +41,9 @@ namespace boatappapi
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            app.UseAuthentication();
+
+            app.UseMiddleware<Authorisation>();
 
             app.UseEndpoints(endpoints =>
             {

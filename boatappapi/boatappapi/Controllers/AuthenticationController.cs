@@ -1,5 +1,6 @@
 ﻿using boatappapi.Model;
 using boatappapi.Service.User;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -26,6 +27,7 @@ namespace boatappapi.Controllers
             _userService = userService;
         }
 
+        [AllowAnonymous]
         [HttpPost("Login")]
         public async Task<IActionResult> GetUserByUsernamePassword([FromBody] UserModel model)
         {
@@ -40,20 +42,20 @@ namespace boatappapi.Controllers
             if (!Verify(model.Password, possibleUser.Password))
                 return BadRequest("Invalid user inputs");
 
-            var token = GenerateJwtToken(possibleUser.Username);
+            var token = GenerateJwtToken(possibleUser.Id.ToString());
             if (token == null)
                 return StatusCode(500);
 
             return Ok(new { Token = token, Success = true });
         }
 
-        private string GenerateJwtToken(string userName)
+        private string GenerateJwtToken(string id)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_configuration["Jwt:key"]);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[] { new Claim("id", userName) }),
+                Subject = new ClaimsIdentity(new[] { new Claim("id", id) }),
                 Expires = DateTime.UtcNow.AddHours(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
