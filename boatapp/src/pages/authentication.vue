@@ -76,27 +76,39 @@ export default {
     };
   },
   methods: {
+    validation() {
+      if (this.username === "") {
+        this.errorMessage = "Username is required";
+        return false;
+      } else if (this.password === "") {
+        this.errorMessage = "Password is required";
+        return false;
+      }
+      return true;
+    },
     async handleSubmission() {
-      const params = {
-        username: this.username,
-        password: this.password,
-      };
+      if (this.validation()) {
+        const params = {
+          username: this.username,
+          password: this.password,
+        };
 
-      const options = {
-        method: "POST",
-        url: "http://localhost:5000/api/authentication/Login",
-        data: params,
-      };
+        const options = {
+          method: "POST",
+          url: "http://localhost:5000/api/authentication/Login",
+          data: params,
+        };
 
-      try {
-        const response = await axios.request(options);
-        if (response.status === 200 && response.data !== undefined) {
-          localStorage.setItem("username", this.username);
-          localStorage.setItem("token", response.data.token );
-          this.$router.push({ name: "home" });
+        try {
+          const response = await axios.request(options);
+          if (response.status === 200 && response.data !== undefined) {
+            localStorage.setItem("username", this.username);
+            localStorage.setItem("token", response.data.token);
+            this.$router.push({ name: "home" });
+          }
+        } catch (error) {
+          this.errorMessage = error.response.data.errors;
         }
-      } catch (error) {
-        this.errorMessage = error;
       }
     },
   },

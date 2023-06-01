@@ -13,6 +13,18 @@ const routes = [
     component: () => import("../pages/index.vue"),
     beforeEnter: requireAuth,
   },
+  {
+    path: "/boat/:id",
+    name: "boat",
+    component: () => import("../pages/boat/update.vue"),
+    beforeEnter: requireAuth,
+  },
+  {
+    path: "/boat/submit",
+    name: "boatsubmission",
+    component: () => import("../pages/boat/submission.vue"),
+    beforeEnter: requireAuth,
+  },
 ];
 
 const router = createRouter({
