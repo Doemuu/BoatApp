@@ -24,7 +24,7 @@
         class="grid grid-cols-8 border-x border-b cursor-pointer"
         v-for="boat in boats"
         :key="boat.id"
-        v-on:click="handleClick(boat.id)"
+        v-on:click="handleClick(boat)"
       >
         <div class="col-span-3 p-1">{{ boat.id }}</div>
         <div class="col-span-1 p-1 bg-gray-200">{{ boat.name }}</div>
@@ -64,15 +64,20 @@ export default {
         const response = await axios.request(options);
         if (response.status === 200 && response.data !== undefined) {
           this.boats = response.data;
-        } else if (response.status === 401) {
-          this.$router.push({ name: "Login" });
         }
       } catch (error) {
         console.log(error);
+        if (error.response.status === 401) {
+          this.$router.push({ name: "Login" });
+        }
       }
     },
-    handleClick(event) {
-      console.log(event);
+    handleClick(boat) {
+      this.$store.dispatch("updateBoat", boat);
+      this.$router.push({ name: "boat", params: { id: boat.id } });
+    },
+    addNewBoat() {
+      this.$router.push({ name: "boatsubmission" });
     },
   },
 };

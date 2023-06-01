@@ -2,10 +2,22 @@ import { createStore } from "vuex";
 
 const store = createStore({
   state() {
-    return {};
+    return {
+      activeBoat: undefined,
+    };
   },
-  mutations: {},
-  actions: {},
+  mutations: {
+    updateBoat(state, payload) {
+      state.activeBoat = payload;
+    },
+  },
+  actions: {
+    updateBoat(context, payload) {
+      if (payload !== undefined) {
+        context.commit("updateBoat", payload);
+      }
+    },
+  },
 });
 
 export default store;
