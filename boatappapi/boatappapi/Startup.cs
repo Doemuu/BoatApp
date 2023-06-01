@@ -1,15 +1,13 @@
+using boatappapi.Connector;
+using boatappapi.Middleware;
+using boatappapi.Service.Boat;
+using boatappapi.Service.User;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace boatappapi
 {
@@ -26,6 +24,24 @@ namespace boatappapi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            services.AddDbContext<DbDoemuDataContext>(
+               o => o.UseNpgsql(Configuration.GetConnectionString("DbDoemu")));
+
+            services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IBoatService, BoatService>();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("OpenPolicy",
+                                    builder =>
+                                    {
+                                        builder.AllowAnyOrigin()
+                                               .AllowAnyMethod()
+                                               .AllowAnyHeader();
+                                    });
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -36,11 +52,13 @@ namespace boatappapi
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
-
+            app.UseCors("OpenPolicy"); 
+            
             app.UseRouting();
 
-            app.UseAuthorization();
+            app.UseAuthentication();
+
+            app.UseMiddleware<Authorisation>();
 
             app.UseEndpoints(endpoints =>
             {
