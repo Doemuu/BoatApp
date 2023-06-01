@@ -15,11 +15,10 @@ services:
     build:
       context: ./boatapp
       dockerfile: Dockerfile
-      
+
     container_name: frontend
     volumes:
       - '.:/boatapp'
-      - './boatapp/node_modules'
     ports:
       - 8080:8080
 
