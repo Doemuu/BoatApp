@@ -31,6 +31,17 @@ namespace boatappapi
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IBoatService, BoatService>();
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("OpenPolicy",
+                                    builder =>
+                                    {
+                                        builder.AllowAnyOrigin()
+                                               .AllowAnyMethod()
+                                               .AllowAnyHeader();
+                                    });
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -41,6 +52,8 @@ namespace boatappapi
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseCors("OpenPolicy"); 
+            
             app.UseRouting();
 
             app.UseAuthentication();
